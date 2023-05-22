@@ -1,0 +1,61 @@
+body{
+     font-family: 'Alkatra', cursive;
+     margin: 10px;
+    
+}
+
+h1{
+    text-align: center;
+    font-size: 52px;
+    margin-bottom: 10px;
+}
+
+.header{
+    display: flex;
+    align-items: center;
+
+}
+
+.timer{
+    margin-left: 30px;
+}
+.score-attempts{
+    display: flex;
+}
+
+h3{
+    margin-left: 10px;
+}
+
+.startBtn{
+    margin-left: 20px;
+    padding: 10px;
+    height: 37px;
+    width: 112px;
+    border-radius: 5px;
+    border: 1px solid #284268;
+    background-color: #7FFFD4;
+    color: #284268
+}
+
+.startBtn:hover{
+    cursor: pointer;
+}
+
+.b-grid {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.b-grid img {
+    width: 180px;
+    margin: 10px;
+    border: 3px solid #48ffc2;
+    border-radius: 10px;
+    background-color: aquamarine;
+}
+
+
+img:hover{
+    cursor: pointer;
+}
