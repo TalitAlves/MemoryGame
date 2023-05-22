@@ -66,15 +66,30 @@ const score = document.querySelector("[data-function='score']");
 const attempt = document.querySelector("[data-function='attempts']");
 const startBtn = document.querySelector(".startBtn");
 const second = document.querySelector(".second");
+const GameOverText = document.querySelector(".Game-over");
+const finalScore = document.querySelector(".finalScore");
+const finalAttempts = document.querySelector(".finalAttempts");
 
-let seconds = 0;
+
+
 let countClick = 0;
 let clickedCard = [];
+let countFinalGame = [];
 
 let countScore = 0;
 let countAttemps = 0;
 const imagem = "/img/universe.svg";
 const clicked = "/img/tick.svg";
+
+const finalGame = () => {
+  if (countScore == 6) {
+    modal.style.display = "block";
+    GameOverText.innerHTML = "Good Memory"
+    finalScore.innerHTML = `Final Score: ${countScore}`
+    finalAttempts.innerHTML = `Attempts: ${countAttemps}`
+
+  }
+};
 
 const countMatch = () => {
   const img = document.querySelectorAll("img");
@@ -88,17 +103,18 @@ const countMatch = () => {
     );
 
     if (clickedCard[0].name === clickedCard[1].name) {
-      console.log("score");
       countScore++;
+      finalGame();
       countAttemps++;
       score.innerHTML = countScore;
       attempt.innerHTML = countAttemps;
-      img[card1].setAttribute("src", clicked);
-      img[card2].setAttribute("src", clicked);
+      setTimeout(() => {
+        img[card1].setAttribute("src", clicked);
+        img[card2].setAttribute("src", clicked);
+      }, 1000);
       countClick = 0;
       clickedCard = [];
     } else {
-      console.log("tentativa");
       countAttemps++;
       attempt.innerHTML = countAttemps;
       img[card1].addEventListener("click", handleValidClick);
@@ -117,7 +133,6 @@ const countMatch = () => {
 const handleValidClick = (event) => {
   const img = document.querySelectorAll("img");
   const id = event.target.id;
-  console.log("click primeiro " + countClick);
   countClick++;
 
   let card = cardArray.find((element) => element.id == id);
@@ -128,14 +143,11 @@ const handleValidClick = (event) => {
     img[cardIndex].setAttribute("src", cardArray[cardIndex].img);
     img[cardIndex].removeEventListener("click", handleValidClick);
     countMatch(countClick);
-    console.log(clickedCard.length);
-    console.log(card);
-    console.log("clicked" + countClick);
   }
-  console.log(clickedCard);
 };
 
 const makeCard = () => {
+  grid.innerHTML = ""
   for (const item of cardArray) {
     const card = document.createElement("img");
     card.setAttribute("src", imagem);
@@ -146,9 +158,10 @@ const makeCard = () => {
 };
 makeCard();
 
+let seconds = 0;
 const setTimer = () => {
   second.innerText = seconds <= 9 ? "0" + seconds : seconds;
-  seconds = seconds <= 30 ? seconds : 0;
+  seconds = seconds <= 10 ? seconds : 0;
   seconds++;
 
   const cards = document.querySelectorAll("img");
@@ -157,7 +170,53 @@ const setTimer = () => {
   }
 };
 
-const startGame = (() => {
-    setTimer()
-},1000)
-startBtn.addEventListener("click", setInterval);
+const startGame = () => {
+  makeCard();
+  countScore = 0
+  countAttemps = 0
+  seconds = 0;
+  score.innerHTML = countScore;
+  attempt.innerHTML = countAttemps;
+  
+
+  let id = setInterval(() => {
+    setTimer();
+    if (seconds >= 11) {
+      modal.style.display = "block";
+      GameOverText.innerHTML = "Game Over"
+      finalScore.innerHTML = `Final Score: ${countScore}`
+      finalAttempts.innerHTML = `Attempts: ${countAttemps}`
+      clearInterval(id);
+      seconds = 0;
+
+      const cards = document.querySelectorAll("img");
+      for (const card of cards) {
+        card.removeEventListener("click", handleValidClick);
+      }
+    }
+  }, 1000);
+};
+
+startBtn.addEventListener("click", startGame);
+
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function () {
+  modal.style.display = "none";
+};
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function (event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+    
+  }
+};
