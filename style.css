@@ -47,6 +47,10 @@ h3{
     flex-wrap: wrap;
 }
 
+.opacity{
+    opacity: 0.3;
+}
+
 .b-grid img {
     width: 80px;
     margin: 10px;
@@ -96,3 +100,15 @@ img:hover{
     text-decoration: none;
     cursor: pointer;
   }
+
+  footer{
+    color: rgb(243, 108, 108);
+    margin-top: 70px;
+    text-align: center;
+    
+}
+a{
+   
+    color: rgb(174, 105, 239);
+    text-decoration: none;
+}

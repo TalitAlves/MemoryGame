@@ -70,8 +70,6 @@ const GameOverText = document.querySelector(".Game-over");
 const finalScore = document.querySelector(".finalScore");
 const finalAttempts = document.querySelector(".finalAttempts");
 
-
-
 let countClick = 0;
 let clickedCard = [];
 let countFinalGame = [];
@@ -83,52 +81,67 @@ const clicked = "/img/tick.svg";
 
 const finalGame = () => {
   if (countScore == 6) {
-    modal.style.display = "block";
-    GameOverText.innerHTML = "Good Memory"
-    finalScore.innerHTML = `Final Score: ${countScore}`
-    finalAttempts.innerHTML = `Attempts: ${countAttemps}`
+    showModal("Good Memory");
+    updateFinalScore();
 
-  }
-};
-
-const countMatch = () => {
-  const img = document.querySelectorAll("img");
-
-  if (countClick === 2) {
-    const card1 = cardArray.findIndex(
-      (element) => element.id === clickedCard[0].id
-    );
-    const card2 = cardArray.findIndex(
-      (element) => element.id === clickedCard[1].id
-    );
-
-    if (clickedCard[0].name === clickedCard[1].name) {
-      countScore++;
-      finalGame();
-      countAttemps++;
-      score.innerHTML = countScore;
-      attempt.innerHTML = countAttemps;
-      setTimeout(() => {
-        img[card1].setAttribute("src", clicked);
-        img[card2].setAttribute("src", clicked);
-      }, 1000);
-      countClick = 0;
-      clickedCard = [];
-    } else {
-      countAttemps++;
-      attempt.innerHTML = countAttemps;
-      img[card1].addEventListener("click", handleValidClick);
-      img[card2].addEventListener("click", handleValidClick);
-      countClick = 0;
-      clickedCard = [];
-
-      setTimeout(() => {
-        img[card1].setAttribute("src", imagem);
-        img[card2].setAttribute("src", imagem);
-      }, 1000);
+    const cards = document.querySelectorAll("img");
+    for (const card of cards) {
+      card.removeEventListener("click", handleValidClick);
     }
   }
 };
+
+const showModal = (message) => {
+  modal.style.display = "block";
+  GameOverText.innerHTML = message;
+};
+
+const updateFinalScore = () => {
+  finalScore.innerHTML = `Final Score: ${countScore}`;
+  finalAttempts.innerHTML = `Attempts: ${countAttemps}`;
+};
+
+const handleScore = (countScore, countAttemps) => {
+  score.innerHTML = countScore;
+  attempt.innerHTML = countAttemps;
+  countClick = 0;
+  clickedCard = [];
+};
+
+const handleBackgroundCard =(card1, card2, background) =>{
+  setTimeout(() => {
+   (card1).setAttribute("src", background);
+   (card2).setAttribute("src", background);
+
+    
+  }, 1000);
+
+}
+
+const countMatch = () => {
+  const img = document.querySelectorAll("img");
+  
+  if (countClick === 2) {
+    const card1 = cardArray.findIndex((element) => element.id === clickedCard[0].id);
+    const card2 = cardArray.findIndex((element) => element.id === clickedCard[1].id);
+
+    if (clickedCard[0].name === clickedCard[1].name) {
+      countScore++;
+      countAttemps++;
+      handleBackgroundCard(img[card1], img[card2], clicked)
+      handleScore(countScore, countAttemps);
+      finalGame();
+     
+    } else {
+      countAttemps++;
+      handleBackgroundCard(img[card1], img[card2], imagem)
+      handleScore(countScore, countAttemps);
+      img[card1].addEventListener("click", handleValidClick);
+      img[card2].addEventListener("click", handleValidClick);
+
+    } 
+};
+}
 
 const handleValidClick = (event) => {
   const img = document.querySelectorAll("img");
@@ -147,12 +160,13 @@ const handleValidClick = (event) => {
 };
 
 const makeCard = () => {
-  grid.innerHTML = ""
+  grid.innerHTML = "";
   for (const item of cardArray) {
     const card = document.createElement("img");
     card.setAttribute("src", imagem);
     card.setAttribute("id", item.id);
     card.setAttribute("name", item.name);
+   
     grid.appendChild(card);
   }
 };
@@ -170,43 +184,45 @@ const setTimer = () => {
   }
 };
 
+const setGameTime =() =>{
+
+  let id = setInterval(() => {
+    setTimer();
+    if (seconds >= 11 && countScore <6) {
+      modal.style.display = "block";
+      showModal("Game Over");
+      updateFinalScore();
+      clearInterval(id);
+      seconds = 0;
+     
+    } else if(seconds >= 11){
+      updateFinalScore();
+      clearInterval(id);
+      seconds = 0;
+      
+    }
+  }, 1000);
+
+}
+
 const startGame = () => {
   makeCard();
-  countScore = 0
-  countAttemps = 0
+  countScore = 0;
+  countAttemps = 0;
   seconds = 0;
   score.innerHTML = countScore;
   attempt.innerHTML = countAttemps;
   
+  setGameTime()
 
-  let id = setInterval(() => {
-    setTimer();
-    if (seconds >= 11) {
-      modal.style.display = "block";
-      GameOverText.innerHTML = "Game Over"
-      finalScore.innerHTML = `Final Score: ${countScore}`
-      finalAttempts.innerHTML = `Attempts: ${countAttemps}`
-      clearInterval(id);
-      seconds = 0;
-
-      const cards = document.querySelectorAll("img");
-      for (const card of cards) {
-        card.removeEventListener("click", handleValidClick);
-      }
-    }
-  }, 1000);
 };
 
 startBtn.addEventListener("click", startGame);
 
 var modal = document.getElementById("myModal");
 
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
-
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
-
 
 // When the user clicks on <span> (x), close the modal
 span.onclick = function () {
@@ -217,6 +233,5 @@ span.onclick = function () {
 window.onclick = function (event) {
   if (event.target == modal) {
     modal.style.display = "none";
-    
   }
 };
