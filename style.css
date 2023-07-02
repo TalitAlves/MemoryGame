@@ -45,6 +45,8 @@ h3{
 .b-grid {
     display: flex;
     flex-wrap: wrap;
+    width: 60vw;
+    justify-content: center;
 }
 
 .opacity{
